@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Satisfy&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,33 +6,33 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222 47% 11%;
+    --background: 40 100% 97%;
+    --foreground: 220 30% 15%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 220 30% 15%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 220 30% 15%;
 
-    --primary: 217 91% 60%;
+    --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 180 60% 45%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 215 16% 47%;
-    --muted-foreground: 215 16% 47%;
+    --muted: 220 15% 65%;
+    --muted-foreground: 220 15% 50%;
 
-    --accent: 160 84% 39%;
+    --accent: 340 82% 52%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 217 91% 60%;
+    --border: 30 30% 88%;
+    --input: 30 30% 88%;
+    --ring: 25 95% 53%;
 
     --radius: 1rem;
 
@@ -43,40 +43,56 @@
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-ring: 25 95% 53%;
 
     --brand-bezier: cubic-bezier(0.16, 1, 0.3, 1);
-    --card-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 10px 20px -5px rgba(0,0,0,0.04);
+    --card-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 12px 24px -8px rgba(0,0,0,0.08);
+
+    --tropical-yellow: 45 100% 51%;
+    --tropical-teal: 180 60% 45%;
+    --tropical-coral: 340 82% 52%;
+    --tropical-orange: 25 95% 53%;
+    --demand-high: 0 84% 60%;
+    --demand-moderate: 25 95% 53%;
+    --demand-low: 160 84% 39%;
   }
 
   .dark {
-    --background: 222 47% 6%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 8%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 8%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
+    --background: 220 30% 8%;
+    --foreground: 40 30% 95%;
+    --card: 220 30% 12%;
+    --card-foreground: 40 30% 95%;
+    --popover: 220 30% 12%;
+    --popover-foreground: 40 30% 95%;
+    --primary: 25 95% 53%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 217 33% 17%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 215 20% 65%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 160 84% 39%;
+    --secondary: 180 60% 40%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 15% 40%;
+    --muted-foreground: 220 15% 60%;
+    --accent: 340 82% 52%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 63% 31%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 213 27% 84%;
-    --sidebar-background: 240 5.9% 10%;
+    --destructive-foreground: 40 30% 95%;
+    --border: 220 20% 20%;
+    --input: 220 20% 20%;
+    --ring: 25 95% 53%;
+    --sidebar-background: 220 30% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224 76% 48%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent: 220 20% 18%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217 91% 60%;
+    --sidebar-border: 220 20% 18%;
+    --sidebar-ring: 25 95% 53%;
+
+    --tropical-yellow: 45 100% 51%;
+    --tropical-teal: 180 60% 40%;
+    --tropical-coral: 340 82% 52%;
+    --tropical-orange: 25 95% 53%;
+    --demand-high: 0 84% 60%;
+    --demand-moderate: 25 95% 53%;
+    --demand-low: 160 84% 39%;
   }
 }
 
@@ -86,7 +102,7 @@
   }
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Nunito', system-ui, -apple-system, sans-serif;
   }
 }
 
@@ -96,5 +112,17 @@
   }
   .tracking-display {
     letter-spacing: -0.03em;
+  }
+  .font-script {
+    font-family: 'Satisfy', cursive;
+  }
+  .gradient-tropical {
+    background: linear-gradient(135deg, hsl(25, 95%, 53%), hsl(340, 82%, 52%), hsl(280, 70%, 50%));
+  }
+  .gradient-text {
+    background: linear-gradient(135deg, hsl(25, 95%, 53%), hsl(340, 82%, 52%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 }

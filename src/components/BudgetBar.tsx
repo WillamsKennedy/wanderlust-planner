@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 interface BudgetBarProps {
   total: number;
@@ -13,27 +13,23 @@ const BudgetBar = ({ total, spent, currency = "R$" }: BudgetBarProps) => {
 
   return (
     <div className="w-full px-1">
-      <div className="flex items-baseline justify-between mb-2">
-        <span className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          Orçamento disponível
-        </span>
+      <div className="flex items-baseline justify-between mb-1">
+        <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Orçamento</span>
         <motion.span
           key={remaining}
           animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className={`text-2xl font-bold tabular-nums tracking-display ${
-            isOver ? "text-destructive" : "text-foreground"
-          }`}
+          transition={{ duration: 0.3 }}
+          className={`text-sm font-extrabold tabular-nums ${isOver ? "text-destructive" : "text-foreground"}`}
         >
           {currency} {remaining.toLocaleString("pt-BR")}
         </motion.span>
       </div>
-      <div className="h-1.5 w-full rounded-full bg-secondary overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-border overflow-hidden">
         <motion.div
-          className={`h-full rounded-full ${isOver ? "bg-destructive" : "bg-accent"}`}
+          className={`h-full rounded-full ${isOver ? "bg-destructive" : "gradient-tropical"}`}
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.5 }}
         />
       </div>
     </div>
