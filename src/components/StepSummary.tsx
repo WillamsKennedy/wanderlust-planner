@@ -1,6 +1,10 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Check, RotateCcw } from "lucide-react";
+import { Check, RotateCcw, Save } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { useToast } from "@/hooks/use-toast";
 import type { TravelState } from "@/types/travel";
 
 interface StepSummaryProps {
@@ -9,6 +13,34 @@ interface StepSummaryProps {
 }
 
 const StepSummary = ({ data, onRestart }: StepSummaryProps) => {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    if (!user) return;
+    setSaving(true);
+    const { error } = await supabase.from('travel_history').insert({
+      user_id: user.id,
+      budget: data.budget,
+      people: data.people,
+      group_type: data.groupType,
+      country: data.country,
+      state: data.state,
+      entertainment: data.entertainment,
+      food: data.food,
+      accommodation: data.accommodation,
+    } as any);
+    setSaving(false);
+    if (error) {
+      toast({ title: 'Erro ao salvar', description: error.message, variant: 'destructive' });
+    } else {
+      setSaved(true);
+      toast({ title: 'Viagem salva!', description: 'Acesse seu histórico para ver.' });
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -17,12 +49,12 @@ const StepSummary = ({ data, onRestart }: StepSummaryProps) => {
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       className="flex flex-col items-center gap-8"
     >
-      <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center">
-        <Check size={32} className="text-accent-foreground" />
+      <div className="w-16 h-16 rounded-full gradient-tropical flex items-center justify-center">
+        <Check size={32} className="text-primary-foreground" />
       </div>
 
       <div className="text-center space-y-2">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-display text-foreground">
+        <h2 className="text-3xl md:text-4xl font-extrabold tracking-display text-foreground">
           Roteiro pronto!
         </h2>
         <p className="text-muted-foreground text-lg">
@@ -47,14 +79,20 @@ const StepSummary = ({ data, onRestart }: StepSummaryProps) => {
         )}
       </div>
 
-      <p className="text-sm text-muted-foreground text-center max-w-sm">
-        Em breve você receberá sugestões detalhadas de restaurantes, atividades e hospedagem otimizados para seu orçamento.
-      </p>
-
-      <Button variant="outline" size="lg" onClick={onRestart} className="gap-2">
-        <RotateCcw size={16} />
-        Planejar outra viagem
-      </Button>
+      <div className="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+        {!saved && (
+          <Button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex-1 gradient-tropical border-0 rounded-full font-bold gap-2"
+          >
+            <Save size={16} /> {saving ? 'Salvando...' : 'Salvar no histórico'}
+          </Button>
+        )}
+        <Button variant="outline" size="lg" onClick={onRestart} className="flex-1 rounded-full gap-2">
+          <RotateCcw size={16} /> Nova viagem
+        </Button>
+      </div>
     </motion.div>
   );
 };

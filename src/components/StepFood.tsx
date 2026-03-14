@@ -22,9 +22,7 @@ const StepFood = ({ onNext }: StepFoodProps) => {
   const [selected, setSelected] = useState<string[]>([]);
 
   const toggle = (id: string) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]
-    );
+    setSelected((prev) => prev.includes(id) ? prev.filter((s) => s !== id) : [...prev, id]);
   };
 
   return (
@@ -36,12 +34,10 @@ const StepFood = ({ onNext }: StepFoodProps) => {
       className="flex flex-col items-center gap-10"
     >
       <div className="text-center space-y-2">
-        <h2 className="text-3xl md:text-4xl font-bold tracking-display text-foreground">
-          E para comer?
+        <h2 className="text-3xl md:text-4xl font-extrabold tracking-display text-foreground">
+          E para <span className="gradient-text">comer?</span>
         </h2>
-        <p className="text-muted-foreground text-lg">
-          Que sabores combinam com sua viagem?
-        </p>
+        <p className="text-muted-foreground text-lg">Que sabores combinam com sua viagem?</p>
       </div>
 
       <div className="flex flex-wrap justify-center gap-3 max-w-lg">
@@ -52,10 +48,10 @@ const StepFood = ({ onNext }: StepFoodProps) => {
               key={opt.id}
               whileTap={{ scale: 0.95 }}
               onClick={() => toggle(opt.id)}
-              className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold border transition-all ${
+              className={`inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold border transition-all ${
                 isActive
-                  ? "bg-foreground text-background border-foreground shadow-sm"
-                  : "bg-secondary text-muted-foreground border-border hover:bg-border"
+                  ? "gradient-tropical text-primary-foreground border-transparent shadow-md"
+                  : "bg-card text-muted-foreground border-border hover:border-primary/30 hover:bg-primary/5"
               }`}
             >
               <opt.icon size={16} />
@@ -66,11 +62,9 @@ const StepFood = ({ onNext }: StepFoodProps) => {
       </div>
 
       <Button
-        variant="stepper"
-        size="xl"
         disabled={selected.length === 0}
         onClick={() => onNext(selected)}
-        className="w-full max-w-xs"
+        className="w-full max-w-xs h-14 rounded-full text-lg font-bold gradient-tropical border-0 shadow-lg"
       >
         Continuar
       </Button>
