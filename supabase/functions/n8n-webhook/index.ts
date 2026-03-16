@@ -12,7 +12,7 @@ serve(async (req) => {
 
   try {
     const { action, params } = await req.json();
-    const N8N_WEBHOOK_BASE_URL = Deno.env.get('N8N_WEBHOOK_BASE_URL');
+    const N8N_WEBHOOK_BASE_URL = Deno.env.get('https://willamsknd.app.n8n.cloud/webhook-test');
 
     if (!N8N_WEBHOOK_BASE_URL) {
       return new Response(
