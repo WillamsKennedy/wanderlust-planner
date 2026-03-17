@@ -14,6 +14,227 @@ export type Database = {
   }
   public: {
     Tables: {
+      itinerary_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          itinerary_id: string
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          itinerary_id: string
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          itinerary_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "itinerary_comments_itinerary_id_fkey"
+            columns: ["itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "shared_itineraries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      itinerary_likes: {
+        Row: {
+          created_at: string
+          id: string
+          itinerary_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          itinerary_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          itinerary_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "itinerary_likes_itinerary_id_fkey"
+            columns: ["itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "shared_itineraries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      itinerary_ratings: {
+        Row: {
+          created_at: string
+          id: string
+          itinerary_id: string
+          score: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          itinerary_id: string
+          score: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          itinerary_id?: string
+          score?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "itinerary_ratings_itinerary_id_fkey"
+            columns: ["itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "shared_itineraries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      saved_itineraries: {
+        Row: {
+          created_at: string
+          id: string
+          itinerary_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          itinerary_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          itinerary_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_itineraries_itinerary_id_fkey"
+            columns: ["itinerary_id"]
+            isOneToOne: false
+            referencedRelation: "shared_itineraries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shared_itineraries: {
+        Row: {
+          accommodation: Json | null
+          budget: number
+          budget_label: string
+          city: string
+          city_name: string
+          created_at: string
+          days: number
+          description: string | null
+          group_type: string
+          id: string
+          itinerary_data: Json | null
+          likes_count: number | null
+          local_transport: string | null
+          map_data: Json | null
+          month: number | null
+          people: number
+          rating_avg: number | null
+          rating_count: number | null
+          selected_spots: Json
+          title: string
+          transport_to_destination: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          accommodation?: Json | null
+          budget: number
+          budget_label: string
+          city: string
+          city_name: string
+          created_at?: string
+          days?: number
+          description?: string | null
+          group_type?: string
+          id?: string
+          itinerary_data?: Json | null
+          likes_count?: number | null
+          local_transport?: string | null
+          map_data?: Json | null
+          month?: number | null
+          people?: number
+          rating_avg?: number | null
+          rating_count?: number | null
+          selected_spots?: Json
+          title: string
+          transport_to_destination?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          accommodation?: Json | null
+          budget?: number
+          budget_label?: string
+          city?: string
+          city_name?: string
+          created_at?: string
+          days?: number
+          description?: string | null
+          group_type?: string
+          id?: string
+          itinerary_data?: Json | null
+          likes_count?: number | null
+          local_transport?: string | null
+          map_data?: Json | null
+          month?: number | null
+          people?: number
+          rating_avg?: number | null
+          rating_count?: number | null
+          selected_spots?: Json
+          title?: string
+          transport_to_destination?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       travel_history: {
         Row: {
           accommodation: string | null

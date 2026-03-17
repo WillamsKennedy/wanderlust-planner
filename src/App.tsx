@@ -8,6 +8,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Planner from "./pages/Planner";
 import TravelHistory from "./pages/TravelHistory";
+import Community from "./pages/Community";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/planejar" element={<Planner />} />
             <Route path="/historico" element={<TravelHistory />} />
+            <Route path="/comunidade" element={<Community />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

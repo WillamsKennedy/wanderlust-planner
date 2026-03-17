@@ -1,43 +1,39 @@
 import { useState, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Search, Star, Check, MapPin, Filter } from "lucide-react";
-import { brazilianStates, touristSpotsByState, monthNames } from "@/data/mockData";
-import type { TouristSpot, StateData } from "@/types/travel";
+import { pernambucoCities, spotsByCity, monthNames, categoryLabels } from "@/data/mockData";
+import type { TouristSpot, CityData } from "@/types/travel";
 
-interface StepStateProps {
+interface StepCityProps {
   month: number | null;
-  preSelectedState?: string;
-  onNext: (state: string, stateName: string, spots: TouristSpot[]) => void;
+  preSelectedCity?: string;
+  onNext: (cityId: string, cityName: string, spots: TouristSpot[]) => void;
 }
 
-const regions = ['Todos', 'Nordeste', 'Sudeste', 'Sul', 'Norte', 'Centro-Oeste'];
+const categories = ['Todos', 'turismo', 'praia', 'trilha', 'entretenimento', 'cultura', 'natureza'];
 
-const demandColors: Record<string, string> = {
-  high: 'bg-destructive/10 text-destructive',
-  moderate: 'bg-primary/10 text-primary',
-  low: 'bg-secondary/20 text-secondary',
-};
-
-const StepState = ({ month, preSelectedState, onNext }: StepStateProps) => {
+const StepCity = ({ month, preSelectedCity, onNext }: StepCityProps) => {
   const [search, setSearch] = useState("");
-  const [regionFilter, setRegionFilter] = useState("Todos");
-  const [selectedState, setSelectedState] = useState<StateData | null>(
-    preSelectedState ? brazilianStates.find(s => s.id === preSelectedState) || null : null
+  const [selectedCity, setSelectedCity] = useState<CityData | null>(
+    preSelectedCity ? pernambucoCities.find(c => c.id === preSelectedCity) || null : null
   );
-  const [sheetOpen, setSheetOpen] = useState(!!preSelectedState);
+  const [sheetOpen, setSheetOpen] = useState(!!preSelectedCity);
   const [selectedSpots, setSelectedSpots] = useState<TouristSpot[]>([]);
+  const [catFilter, setCatFilter] = useState("Todos");
 
-  const filteredStates = useMemo(() => {
-    return brazilianStates.filter(s => {
-      const matchSearch = s.name.toLowerCase().includes(search.toLowerCase());
-      const matchRegion = regionFilter === 'Todos' || s.region === regionFilter;
-      return matchSearch && matchRegion;
-    });
-  }, [search, regionFilter]);
+  const filteredCities = useMemo(() => {
+    return pernambucoCities.filter(c =>
+      c.name.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [search]);
 
-  const spots = selectedState ? touristSpotsByState[selectedState.id] || [] : [];
+  const spots = useMemo(() => {
+    const all = selectedCity ? spotsByCity[selectedCity.id] || [] : [];
+    if (catFilter === 'Todos') return all;
+    return all.filter(s => s.category === catFilter);
+  }, [selectedCity, catFilter]);
 
   const toggleSpot = (spot: TouristSpot) => {
     setSelectedSpots(prev =>
@@ -54,16 +50,17 @@ const StepState = ({ month, preSelectedState, onNext }: StepStateProps) => {
     return monthNames[spot.peakMonths[0] - 1];
   };
 
-  const handleStateClick = (state: StateData) => {
-    setSelectedState(state);
+  const handleCityClick = (city: CityData) => {
+    setSelectedCity(city);
     setSelectedSpots([]);
+    setCatFilter("Todos");
     setSheetOpen(true);
   };
 
   const handleConfirmSpots = () => {
-    if (!selectedState) return;
+    if (!selectedCity) return;
     setSheetOpen(false);
-    onNext(selectedState.id, selectedState.name, selectedSpots);
+    onNext(selectedCity.id, selectedCity.name, selectedSpots);
   };
 
   return (
@@ -76,98 +73,94 @@ const StepState = ({ month, preSelectedState, onNext }: StepStateProps) => {
     >
       <div className="text-center space-y-2">
         <h2 className="text-3xl md:text-4xl font-extrabold tracking-display text-foreground">
-          Para onde no <span className="gradient-text">Brasil?</span>
+          Qual cidade de <span className="gradient-text">Pernambuco?</span>
         </h2>
         <p className="text-muted-foreground text-lg">
-          Selecione o estado e os pontos turísticos
+          Selecione a cidade e as atividades
           {month && <> · <span className="font-semibold">{monthNames[month - 1]}</span></>}
         </p>
       </div>
 
-      {/* Search */}
       <div className="w-full max-w-md flex items-center gap-2 px-4 py-3 bg-card rounded-2xl border border-border" style={{ boxShadow: 'var(--card-shadow)' }}>
         <Search size={18} className="text-muted-foreground" />
         <input
           type="text"
-          placeholder="Buscar estado..."
+          placeholder="Buscar cidade..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="bg-transparent outline-none text-sm text-foreground w-full placeholder:text-muted-foreground"
         />
       </div>
 
-      {/* Region filter */}
-      <div className="flex flex-wrap gap-2 justify-center">
-        {regions.map(r => (
-          <button
-            key={r}
-            onClick={() => setRegionFilter(r)}
-            className={`text-xs font-bold px-4 py-1.5 rounded-full transition-all ${
-              regionFilter === r
-                ? 'gradient-tropical text-primary-foreground'
-                : 'bg-card border border-border text-muted-foreground hover:border-primary/40'
-            }`}
-          >
-            {r}
-          </button>
-        ))}
-      </div>
-
-      {/* State cards */}
       <div className="w-full grid gap-3">
-        {filteredStates.map((state, i) => {
-          const stateSpots = touristSpotsByState[state.id] || [];
+        {filteredCities.map((city, i) => {
+          const citySpots = spotsByCity[city.id] || [];
           return (
             <motion.button
-              key={state.id}
+              key={city.id}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.03, duration: 0.4 }}
               whileHover={{ y: -3 }}
               whileTap={{ scale: 0.98 }}
-              onClick={() => handleStateClick(state)}
+              onClick={() => handleCityClick(city)}
               className="p-4 rounded-2xl border border-border bg-card text-left transition-shadow hover:shadow-lg hover:border-primary/40"
               style={{ boxShadow: 'var(--card-shadow)' }}
             >
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">{state.imageEmoji}</span>
+                  {city.imageUrl ? (
+                    <img src={city.imageUrl} alt={city.name} className="w-14 h-14 rounded-xl object-cover flex-shrink-0" />
+                  ) : (
+                    <span className="text-2xl">{city.imageEmoji}</span>
+                  )}
                   <div>
-                    <h3 className="text-lg font-bold text-card-foreground">{state.name}</h3>
-                    <p className="text-muted-foreground text-xs mt-0.5">{state.description}</p>
+                    <h3 className="text-lg font-bold text-card-foreground">{city.name}</h3>
+                    <p className="text-muted-foreground text-xs mt-0.5">{city.description}</p>
                   </div>
                 </div>
-                <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                  <span className={`text-xs font-bold px-3 py-1 rounded-full ${demandColors[state.demand]}`}>
-                    {state.demandLabel}
-                  </span>
-                  <span className="text-xs text-primary font-semibold">
-                    📍 {stateSpots.length} pontos
-                  </span>
-                </div>
+                <span className="text-xs text-primary font-semibold flex-shrink-0">
+                  📍 {citySpots.length} atividades
+                </span>
               </div>
             </motion.button>
           );
         })}
       </div>
 
-      {/* Tourist Spots Sheet */}
       <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
         <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
           <SheetHeader>
             <SheetTitle className="text-2xl font-extrabold tracking-display">
-              {selectedState?.imageEmoji} {selectedState?.name}
+              {selectedCity?.imageEmoji} {selectedCity?.name}
             </SheetTitle>
             <p className="text-sm text-muted-foreground">
-              Selecione os pontos turísticos
+              Selecione as atividades
               {month && <> · Viagem em <span className="font-semibold">{monthNames[month - 1]}</span></>}
             </p>
           </SheetHeader>
 
-          <div className="mt-6 space-y-3">
+          {/* Category filter */}
+          <div className="flex flex-wrap gap-2 mt-4">
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setCatFilter(cat)}
+                className={`text-xs font-bold px-3 py-1.5 rounded-full transition-all ${
+                  catFilter === cat
+                    ? 'gradient-tropical text-primary-foreground'
+                    : 'bg-card border border-border text-muted-foreground hover:border-primary/40'
+                }`}
+              >
+                {cat === 'Todos' ? '🔄 Todos' : categoryLabels[cat] || cat}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-4 space-y-3">
             {spots.length === 0 && (
               <p className="text-muted-foreground text-center py-8">
-                Pontos turísticos serão carregados via n8n.
+                Nenhuma atividade encontrada nesta categoria.
               </p>
             )}
             {spots.map((spot) => {
@@ -186,11 +179,7 @@ const StepState = ({ month, preSelectedState, onNext }: StepStateProps) => {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 flex-1">
                       {spot.imageUrl ? (
-                        <img
-                          src={spot.imageUrl}
-                          alt={spot.name}
-                          className="w-16 h-16 rounded-xl object-cover flex-shrink-0"
-                        />
+                        <img src={spot.imageUrl} alt={spot.name} className="w-16 h-16 rounded-xl object-cover flex-shrink-0" />
                       ) : (
                         <span className="text-2xl mt-0.5 flex-shrink-0">{spot.imageEmoji}</span>
                       )}
@@ -202,6 +191,11 @@ const StepState = ({ month, preSelectedState, onNext }: StepStateProps) => {
                             <Star size={12} className="text-primary fill-primary" />
                             <span className="font-bold text-foreground">{spot.rating}</span>
                           </span>
+                          {spot.category && (
+                            <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-accent/10 text-accent">
+                              {categoryLabels[spot.category]}
+                            </span>
+                          )}
                           {spot.avgCostPerPerson !== undefined && (
                             <span className="text-xs font-semibold text-accent">
                               {spot.avgCostPerPerson === 0 ? 'Gratuito' : `~R$ ${spot.avgCostPerPerson}/pessoa`}
@@ -230,14 +224,14 @@ const StepState = ({ month, preSelectedState, onNext }: StepStateProps) => {
             })}
           </div>
 
-          {spots.length > 0 && (
+          {(spotsByCity[selectedCity?.id || ''] || []).length > 0 && (
             <div className="mt-6 sticky bottom-0 bg-background pt-4 pb-2">
               <Button
                 onClick={handleConfirmSpots}
                 disabled={selectedSpots.length === 0}
                 className="w-full h-14 rounded-full text-lg font-bold gradient-tropical border-0"
               >
-                Confirmar {selectedSpots.length} ponto{selectedSpots.length !== 1 ? 's' : ''}
+                Confirmar {selectedSpots.length} atividade{selectedSpots.length !== 1 ? 's' : ''}
               </Button>
             </div>
           )}
@@ -247,4 +241,4 @@ const StepState = ({ month, preSelectedState, onNext }: StepStateProps) => {
   );
 };
 
-export default StepState;
+export default StepCity;

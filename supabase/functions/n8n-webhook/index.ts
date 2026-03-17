@@ -2,8 +2,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
+
+const N8N_BASE_URL = 'https://willamsknd.app.n8n.cloud/webhook';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -12,35 +14,25 @@ serve(async (req) => {
 
   try {
     const { action, params } = await req.json();
-    const N8N_WEBHOOK_BASE_URL = Deno.env.get('https://willamsknd.app.n8n.cloud/webhook-test');
 
-    if (!N8N_WEBHOOK_BASE_URL) {
-      return new Response(
-        JSON.stringify({
-          success: true,
-          mock: true,
-          message: 'n8n webhook URL not configured. Using mock data.',
-          data: null,
-        }),
-        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    const webhookUrls: Record<string, string> = {
-      'get-tourist-spots': `${N8N_WEBHOOK_BASE_URL}/get-tourist-spots`,
-      'get-accommodations': `${N8N_WEBHOOK_BASE_URL}/get-accommodations`,
-      'get-restaurants': `${N8N_WEBHOOK_BASE_URL}/get-restaurants`,
-      'get-transport-prices': `${N8N_WEBHOOK_BASE_URL}/get-transport-prices`,
-      'generate-itinerary': `${N8N_WEBHOOK_BASE_URL}/generate-itinerary`,
+    const webhookPaths: Record<string, string> = {
+      'get-tourist-spots': '/get-tourist-spots',
+      'get-accommodations': '/get-accommodations',
+      'get-restaurants': '/get-restaurants',
+      'get-transport-prices': '/get-transport-prices',
+      'generate-itinerary': '/generate-itinerary',
     };
 
-    const webhookUrl = webhookUrls[action];
-    if (!webhookUrl) {
+    const path = webhookPaths[action];
+    if (!path) {
       return new Response(
         JSON.stringify({ success: false, error: `Unknown action: ${action}` }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    const webhookUrl = `${N8N_BASE_URL}${path}`;
+    console.log(`Calling n8n webhook: ${webhookUrl}`);
 
     const response = await fetch(webhookUrl, {
       method: 'POST',

@@ -7,7 +7,7 @@ import StepBudget from "@/components/StepBudget";
 import StepGroupType from "@/components/StepGroupType";
 import StepMonth from "@/components/StepMonth";
 import StepTransportArrival from "@/components/StepTransportArrival";
-import StepState from "@/components/StepState";
+import StepCity from "@/components/StepCity";
 import StepAccommodation from "@/components/StepAccommodation";
 import StepLocalTransport from "@/components/StepLocalTransport";
 import StepSummary from "@/components/StepSummary";
@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Plane } from "lucide-react";
 import type { TravelState, TouristSpot, AccommodationDetail } from "@/types/travel";
 
-type StepName = 'budget' | 'group' | 'month' | 'transport-arrival' | 'state' | 'accommodation' | 'local-transport' | 'summary';
+type StepName = 'budget' | 'group' | 'month' | 'transport-arrival' | 'city' | 'accommodation' | 'local-transport' | 'summary';
 
 const initialState: TravelState = {
   budget: 0,
@@ -25,8 +25,8 @@ const initialState: TravelState = {
   groupType: "solo",
   month: null,
   transportToDestination: null,
-  state: "",
-  stateName: "",
+  city: "",
+  cityName: "",
   selectedSpots: [],
   accommodation: null,
   localTransport: null,
@@ -38,23 +38,23 @@ const Planner = () => {
   const [searchParams] = useSearchParams();
   const [step, setStep] = useState<StepName>('budget');
   const [data, setData] = useState<TravelState>(initialState);
-  const [preSelectedState, setPreSelectedState] = useState<string | undefined>();
+  const [preSelectedCity, setPreSelectedCity] = useState<string | undefined>();
 
   useEffect(() => {
     if (!loading && !user) navigate('/auth');
   }, [user, loading]);
 
   useEffect(() => {
-    const stateParam = searchParams.get('state');
-    if (stateParam) {
-      setPreSelectedState(stateParam);
+    const cityParam = searchParams.get('city');
+    if (cityParam) {
+      setPreSelectedCity(cityParam);
     }
   }, [searchParams]);
 
   const getSteps = (): StepName[] => {
     const steps: StepName[] = ['budget'];
     if (data.people > 1) steps.push('group');
-    steps.push('month', 'transport-arrival', 'state', 'accommodation', 'local-transport', 'summary');
+    steps.push('month', 'transport-arrival', 'city', 'accommodation', 'local-transport', 'summary');
     return steps;
   };
 
@@ -85,11 +85,11 @@ const Planner = () => {
 
   const handleTransportArrival = (transport: string) => {
     setData(d => ({ ...d, transportToDestination: transport }));
-    setStep('state');
+    setStep('city');
   };
 
-  const handleState = (state: string, stateName: string, spots: TouristSpot[]) => {
-    setData(d => ({ ...d, state, stateName, selectedSpots: spots }));
+  const handleCity = (cityId: string, cityName: string, spots: TouristSpot[]) => {
+    setData(d => ({ ...d, city: cityId, cityName, selectedSpots: spots }));
     setStep('accommodation');
   };
 
@@ -152,11 +152,11 @@ const Planner = () => {
             {step === 'group' && <StepGroupType key="group" people={data.people} onNext={handleGroupType} />}
             {step === 'month' && <StepMonth key="month" onNext={handleMonth} />}
             {step === 'transport-arrival' && <StepTransportArrival key="transport" onNext={handleTransportArrival} />}
-            {step === 'state' && <StepState key="state" month={data.month} preSelectedState={preSelectedState} onNext={handleState} />}
+            {step === 'city' && <StepCity key="city" month={data.month} preSelectedCity={preSelectedCity} onNext={handleCity} />}
             {step === 'accommodation' && (
               <StepAccommodation
                 key="accommodation"
-                stateId={data.state}
+                cityId={data.city}
                 selectedSpots={data.selectedSpots}
                 budget={data.budget}
                 onNext={handleAccommodation}
