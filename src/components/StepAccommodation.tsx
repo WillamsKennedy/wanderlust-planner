@@ -18,7 +18,7 @@ interface StepAccommodationProps {
   onNext: (accommodation: AccommodationDetail) => void;
 }
 
-const StepAccommodation = ({ cityId, selectedSpots, budget, onNext }: StepAccommodationProps) => {
+const StepAccommodation = ({ cityId, cityName, selectedSpots, budget, budgetLabel, people, days, month, transportToDestination, onNext }: StepAccommodationProps) => {
   const { toast } = useToast();
   const [accommodations, setAccommodations] = useState<AccommodationDetail[]>([]);
   const [loading, setLoading] = useState(true);
