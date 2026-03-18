@@ -33,11 +33,15 @@ serve(async (req) => {
     const webhookUrl = `${N8N_BASE_URL}${path}`;
     console.log(`Calling n8n webhook: ${webhookUrl}`);
 
+    console.log('Payload:', params);//-----------------
+
     const response = await fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(params),
     });
+
+    console.log('Payload:', params);//---------------
 
     if (!response.ok) {
       const errorBody = await response.text();
