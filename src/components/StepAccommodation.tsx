@@ -7,8 +7,14 @@ import type { AccommodationDetail, TouristSpot } from "@/types/travel";
 
 interface StepAccommodationProps {
   cityId: string;
+  cityName: string;
   selectedSpots: TouristSpot[];
   budget: number;
+  budgetLabel: string;
+  people: number;
+  days: number;
+  month: number | null;
+  transportToDestination: string | null;
   onNext: (accommodation: AccommodationDetail) => void;
 }
 
